@@ -77,7 +77,7 @@
         .quiz-opt.wrong { background: var(--error-light); border-color: var(--error-color); color: var(--error-color); }
 
         /* Writing Styles */
-        .writing-box { width: 100%; min-height: 200px; padding: 1rem; border: 2px solid var(--grey-medium); border-radius: 8px; font-family: inherit; font-size: 1rem; margin-top: 1rem; outline: none; transition: border-color 0.3s; resize: vertical; box-sizing: border-box; }
+        .writing-box { width: 100%; min-height: 200px; padding: 1rem; border: 2px solid var(--grey-medium); border-radius: 8px; font-family: inherit; font-size: 1rem; margin-top: 1rem; outline: none; transition: border-color 0.3s; resize: vertical; box-sizing: border-box; display: block; }
         .writing-box:focus { border-color: var(--primary-color); }
         .lexicon-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
         .chip { padding: 0.4rem 0.8rem; background: var(--white); border: 1px solid var(--grey-medium); border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
@@ -124,12 +124,14 @@
         <div id="lexicon" class="lexicon-pool"></div>
         <button id="checkCloze" class="primary">Vérifier le texte à trous</button>
 
-        <div class="instructions" style="margin-top: 3rem;"><strong>B. Production libre :</strong> Racontez votre propre journée d'école (5 à 10 phrases).</div>
-        <p style="font-size: 0.9rem; color: var(--grey-dark);">Conseil : Utilisez <em>D'abord, Ensuite, Puis, Enfin...</em> pour structurer votre récit.</p>
-        <textarea class="writing-box" id="userText" placeholder="Par exemple : D'abord, je me lève à 6h30. Ensuite..."></textarea>
-        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-            <button id="btnCopyText">📋 Copier mon texte</button>
-            <button id="btnResetText">↺ Effacer</button>
+        <div id="freeWritingSection" style="margin-top: 3rem;">
+            <div class="instructions"><strong>B. Production libre :</strong> Racontez votre propre journée d'école (5 à 10 phrases).</div>
+            <p style="font-size: 0.9rem; color: var(--grey-dark);">Conseil : Utilisez <em>D'abord, Ensuite, Puis, Enfin...</em> pour structurer votre récit.</p>
+            <textarea class="writing-box" id="userText" placeholder="Par exemple : D'abord, je me lève à 6h30. Ensuite..."></textarea>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button id="btnCopyText">📋 Copier mon texte</button>
+                <button id="btnResetText">↺ Effacer</button>
+            </div>
         </div>
     </section>
 </div>
@@ -138,11 +140,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Données de base
     const DICT = {
         "ce": "هذا", "matin": "صباح", "je": "أنا", "me": "نفسي", "lève": "أستيقظ", "à": "في", "sept": "سبعة", "heures": "ساعات", "et": "و", "prends": "أتناول", "mon": "لي", "petit-déjeuner": "فطور", "avec": "مع", "ma": "لي", "famille": "عائلة",
         "ensuite": "بعد ذلك", "vais": "أذهب", "école": "مدرسة", "pied": "قدم", "frère": "أخ", "dans": "في", "première": "أولى", "heure": "ساعة", "nous": "نحن", "avons": "لدينا", "un": "واحد", "cours": "درس", "français": "فرنسي", "où": "حيث", "lisons": "نقرأ", "texte": "نص",
         "puis": "ثم", "mathématiques": "رياضيات", "faisons": "نقوم بـ", "des": "الـ", "exercices": "تمارين", "au": "على", "tableau": "سبورة", "midi": "ظهر", "mange": "آكل", "la": "الـ", "cantine": "مقصف", "mes": "زملائي", "camarades": "زملاء", "classe": "فصل",
-        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة رياضية", "histoire": "تاريخ",
+        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة gymnase", "histoire": "تاريخ",
         "enfin": "أخيراً", "rentre": "أعود", "maison": "منزل", "fais": "أفعل", "devoirs": "واجبات", "regarde": "أشاهد", "peu": "قليلاً", "télévision": "تلفاز"
     };
 
@@ -165,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { q: "Que fait-il enfin à la maison ?", a: ["Il dort", "Il fait ses devoirs", "Il prépare le dîner"], r: 1 }
     ];
 
+    // 2. Gestion TTS
     const tts = {
         synth: window.speechSynthesis,
         voice: null,
@@ -214,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.speakSentence(idx + 1);
                 }
             };
-
             this.synth.speak(u);
         },
         resetButtons() {
@@ -226,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // UI elements
     const textEl = document.getElementById('text');
     const tooltip = document.getElementById('tooltip');
     const btnPlay = document.getElementById('btnPlay');
@@ -234,108 +236,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnResume = document.getElementById('btnResume');
     const btnStop = document.getElementById('btnStop');
 
-    // Section 1: Lecture et Traduction
-    DATA.forEach((s, idx) => {
-        const sentSpan = document.createElement('span');
-        sentSpan.className = 'sent';
-        sentSpan.dataset.idx = idx;
-        s.fr.split(/(\s+)/).forEach(w => {
-            const clean = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
-            if (clean) {
-                const b = document.createElement('span');
-                b.className = 'word';
-                b.textContent = w;
-                b.onmouseenter = (e) => {
-                    e.stopImmediatePropagation();
-                    tooltip.textContent = DICT[clean] || "...";
-                    const rect = b.getBoundingClientRect();
-                    tooltip.style.left = (rect.left + rect.width/2) + "px";
-                    tooltip.style.top = rect.top + "px";
-                    tooltip.style.visibility = "visible"; tooltip.style.opacity = 1;
+    // 3. Initialisation Section 1 (Texte)
+    function initText() {
+        textEl.innerHTML = "";
+        DATA.forEach((s, idx) => {
+            const sentSpan = document.createElement('span');
+            sentSpan.className = 'sent';
+            sentSpan.dataset.idx = idx;
+            s.fr.split(/(\s+)/).forEach(w => {
+                const clean = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                if (clean) {
+                    const b = document.createElement('span');
+                    b.className = 'word';
+                    b.textContent = w;
+                    b.onmouseenter = (e) => {
+                        tooltip.textContent = DICT[clean] || "...";
+                        const rect = b.getBoundingClientRect();
+                        tooltip.style.left = (rect.left + rect.width/2) + "px";
+                        tooltip.style.top = rect.top + "px";
+                        tooltip.style.visibility = "visible"; tooltip.style.opacity = 1;
+                    };
+                    b.onmouseleave = () => { tooltip.style.opacity = 0; tooltip.style.visibility = "hidden"; };
+                    b.onclick = (e) => { 
+                        const singleU = new SpeechSynthesisUtterance(clean);
+                        singleU.voice = tts.voice;
+                        singleU.rate = parseFloat(document.getElementById('rate').value);
+                        tts.synth.cancel();
+                        tts.synth.speak(singleU);
+                    };
+                    sentSpan.appendChild(b);
+                } else { sentSpan.appendChild(document.createTextNode(w)); }
+            });
+            textEl.appendChild(sentSpan); textEl.appendChild(document.createTextNode(' '));
+        });
+    }
+
+    // 4. Initialisation Section 2 (Quiz)
+    function initQuiz() {
+        const quizContainer = document.getElementById('quizContainer');
+        quizContainer.innerHTML = "";
+        QUIZ_DATA.forEach((q, i) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-item';
+            div.innerHTML = `<div class="quiz-question">${i+1}. ${q.q}</div><div class="quiz-options"></div>`;
+            const opts = div.querySelector('.quiz-options');
+            q.a.forEach((opt, oi) => {
+                const oDiv = document.createElement('div');
+                oDiv.className = 'quiz-opt';
+                oDiv.textContent = opt;
+                oDiv.onclick = () => {
+                    if (document.getElementById('quizScore').textContent !== "") return;
+                    div.querySelectorAll('.quiz-opt').forEach(x => x.classList.remove('selected'));
+                    oDiv.classList.add('selected');
                 };
-                b.onmouseleave = () => { tooltip.style.opacity = 0; tooltip.style.visibility = "hidden"; };
-                b.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    const singleU = new SpeechSynthesisUtterance(clean);
-                    singleU.voice = tts.voice;
-                    singleU.rate = parseFloat(document.getElementById('rate').value);
-                    tts.synth.cancel();
-                    tts.synth.speak(singleU);
-                };
-                sentSpan.appendChild(b);
-            } else { sentSpan.appendChild(document.createTextNode(w)); }
+                opts.appendChild(oDiv);
+            });
+            quizContainer.appendChild(div);
         });
-        textEl.appendChild(sentSpan); textEl.appendChild(document.createTextNode(' '));
-    });
+    }
 
-    btnPlay.onclick = () => { 
-        tts.stopRequested = false;
-        tts.isPaused = false;
-        btnPlay.disabled = true; 
-        btnPause.disabled = false;
-        btnStop.disabled = false;
-        tts.speakSentence(0); 
-    };
-
-    btnPause.onclick = () => {
-        tts.isPaused = true;
-        tts.synth.pause();
-        btnPause.disabled = true;
-        btnResume.disabled = false;
-    };
-
-    btnResume.onclick = () => {
-        tts.isPaused = false;
-        tts.synth.resume();
-        btnResume.disabled = true;
-        btnPause.disabled = false;
-    };
-
-    btnStop.onclick = () => { 
-        tts.stopRequested = true;
-        tts.synth.cancel(); 
-        tts.resetButtons();
-    };
-
-    // Section 2: Quiz
-    const quizContainer = document.getElementById('quizContainer');
-    QUIZ_DATA.forEach((q, i) => {
-        const div = document.createElement('div');
-        div.className = 'quiz-item';
-        div.innerHTML = `<div class="quiz-question">${i+1}. ${q.q}</div><div class="quiz-options"></div>`;
-        const opts = div.querySelector('.quiz-options');
-        q.a.forEach((opt, oi) => {
-            const oDiv = document.createElement('div');
-            oDiv.className = 'quiz-opt';
-            oDiv.textContent = opt;
-            oDiv.onclick = () => {
-                if (document.getElementById('quizScore').textContent !== "") return; // Disable after check
-                div.querySelectorAll('.quiz-opt').forEach(x => x.classList.remove('selected'));
-                oDiv.classList.add('selected');
-            };
-            opts.appendChild(oDiv);
-        });
-        quizContainer.appendChild(div);
-    });
-
-    document.getElementById('btnCheckQuiz').onclick = () => {
-        let score = 0;
-        document.querySelectorAll('.quiz-item').forEach((item, i) => {
-            const selected = item.querySelector('.quiz-opt.selected');
-            const options = item.querySelectorAll('.quiz-opt');
-            const correctIndex = QUIZ_DATA[i].r;
-            options[correctIndex].classList.add('correct');
-            if (selected) {
-                const selectedIndex = Array.from(options).indexOf(selected);
-                if (selectedIndex === correctIndex) score++;
-                else selected.classList.add('wrong');
-            }
-        });
-        document.getElementById('quizScore').textContent = `Score final : ${score} / ${QUIZ_DATA.length}`;
-        document.getElementById('btnCheckQuiz').disabled = true;
-    };
-
-    // Section 3: Writing
+    // 5. Initialisation Section 3 (Écriture)
     function initCloze() {
         const area = document.getElementById('clozeArea');
         const lex = document.getElementById('lexicon');
@@ -359,6 +319,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Contrôles Audio
+    btnPlay.onclick = () => { 
+        tts.stopRequested = false; tts.isPaused = false;
+        btnPlay.disabled = true; btnPause.disabled = false; btnStop.disabled = false;
+        tts.speakSentence(0); 
+    };
+    btnPause.onclick = () => { tts.isPaused = true; tts.synth.pause(); btnPause.disabled = true; btnResume.disabled = false; };
+    btnResume.onclick = () => { tts.isPaused = false; tts.synth.resume(); btnResume.disabled = true; btnPause.disabled = false; };
+    btnStop.onclick = () => { tts.stopRequested = true; tts.synth.cancel(); tts.resetButtons(); };
+
+    // Vérification Quiz
+    document.getElementById('btnCheckQuiz').onclick = () => {
+        let score = 0;
+        document.querySelectorAll('.quiz-item').forEach((item, i) => {
+            const selected = item.querySelector('.quiz-opt.selected');
+            const options = item.querySelectorAll('.quiz-opt');
+            const correctIndex = QUIZ_DATA[i].r;
+            options[correctIndex].classList.add('correct');
+            if (selected) {
+                const selectedIndex = Array.from(options).indexOf(selected);
+                if (selectedIndex === correctIndex) score++;
+                else selected.classList.add('wrong');
+            }
+        });
+        document.getElementById('quizScore').textContent = `Score final : ${score} / ${QUIZ_DATA.length}`;
+        document.getElementById('btnCheckQuiz').disabled = true;
+    };
+
+    // Vérification Texte à trous
     document.getElementById('checkCloze').onclick = () => {
         document.querySelectorAll('.cloze-input').forEach(i => {
             const ok = i.value.trim().toLowerCase() === i.dataset.ans.toLowerCase();
@@ -367,17 +356,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Copie texte production libre
     document.getElementById('btnCopyText').onclick = () => {
         const val = document.getElementById('userText').value;
         if(!val) return;
-        // Fallback copy
         const el = document.createElement('textarea');
         el.value = val;
         document.body.appendChild(el);
         el.select();
         document.execCommand('copy');
         document.body.removeChild(el);
-        
         const btn = document.getElementById('btnCopyText');
         const old = btn.textContent;
         btn.textContent = "✅ Texte copié !";
@@ -385,12 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.getElementById('btnResetText').onclick = () => {
-        if(confirm("Voulez-vous vraiment effacer votre production écrite ?")) {
-            document.getElementById('userText').value = "";
-        }
+        if(confirm("Effacer votre production libre ?")) document.getElementById('userText').value = "";
     };
 
-    // Tab Logic
+    // Navigation Onglets
     document.querySelectorAll('.tab').forEach(t => {
         t.onclick = () => {
             document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
@@ -402,8 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
+    // Lancement
     tts.init().then(ok => { if(ok) btnPlay.disabled = false; });
+    initText();
+    initQuiz();
     initCloze();
 });
 </script>
 </body>
+</html>
