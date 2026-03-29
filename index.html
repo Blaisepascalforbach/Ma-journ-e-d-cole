@@ -20,7 +20,7 @@
             --text-color: #1e293b;
             --white: #ffffff;
             --border-radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
         body {
@@ -40,190 +40,48 @@
             box-shadow: var(--shadow);
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin: 0 0 1.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--primary-color);
-        }
+        h1 { font-size: 1.8rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.75rem; }
 
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 2px solid var(--grey-medium);
-            margin-bottom: 2rem;
-        }
+        .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid var(--grey-medium); margin-bottom: 2rem; }
+        .tab { border: none; background: none; padding: 0.75rem 1.25rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--grey-dark); border-bottom: 3px solid transparent; transition: all 0.2s ease; margin-bottom: -2px; }
+        .tab[aria-selected="true"] { color: var(--primary-color); border-bottom-color: var(--primary-color); }
 
-        .tab {
-            border: none;
-            background: none;
-            padding: 0.75rem 1.25rem;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--grey-dark);
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s ease;
-            margin-bottom: -2px;
-        }
+        .panel { display: none; animation: fadeIn 0.3s ease-out; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .tab[aria-selected="true"] {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
+        .instructions { background-color: var(--primary-light); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem; border-left: 4px solid var(--primary-color); }
+        .controls-bar { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; padding: 1rem; background-color: #f1f5f9; border-radius: 8px; }
 
-        .panel {
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
+        button { border: 1px solid var(--grey-medium); border-radius: 8px; padding: 0.6rem 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: white; }
+        button.primary { background: var(--primary-color); color: white; border: none; }
+        button:hover:not(:disabled) { filter: brightness(0.9); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .panel.active {
-            display: block;
-        }
+        .text-content { font-size: 1.15rem; line-height: 2.8; padding: 1rem; }
+        .word { display: inline-block; border-radius: 4px; padding: 0 4px; cursor: pointer; transition: 0.2s; }
+        .word:hover { background: var(--primary-color); color: white; }
+        .word.highlight { background: var(--primary-color); color: white; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .tooltip { position: fixed; z-index: 10000; background: #1e293b; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.95rem; pointer-events: none; visibility: hidden; opacity: 0; transition: opacity 0.1s; direction: rtl; transform: translate(-50%, -100%); margin-top: -12px; white-space: nowrap; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: #1e293b transparent transparent transparent; }
 
-        .instructions {
-            background-color: var(--primary-light);
-            padding: 1rem 1.25rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            border-left: 4px solid var(--primary-color);
-        }
+        /* Quiz Styles */
+        .quiz-item { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--grey-medium); border-radius: 8px; }
+        .quiz-question { font-weight: 600; margin-bottom: 0.5rem; }
+        .quiz-options { display: grid; gap: 0.5rem; }
+        .quiz-opt { padding: 0.5rem; border: 1px solid var(--grey-medium); border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .quiz-opt:hover { background: var(--primary-light); }
+        .quiz-opt.selected { border-color: var(--primary-color); background: var(--primary-light); }
+        .quiz-opt.correct { background: var(--success-light); border-color: var(--success-color); color: var(--success-color); font-weight: bold; }
+        .quiz-opt.wrong { background: var(--error-light); border-color: var(--error-color); color: var(--error-color); }
 
-        .controls-bar {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: #f1f5f9;
-            border-radius: var(--border-radius);
-        }
-
-        button {
-            border: 1px solid var(--grey-medium);
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-            background-color: var(--white);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        button.primary {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-        }
-
-        .text-content {
-            font-size: 1.2rem;
-            line-height: 2.5;
-            padding: 1rem;
-            position: relative;
-        }
-
-        .sent {
-            padding: 0.2rem 0;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .sent.active {
-            background-color: var(--primary-light);
-        }
-
-        .word {
-            display: inline-block;
-            border-radius: 4px;
-            padding: 0 4px;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .word:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .word.highlight {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .tooltip {
-            position: fixed;
-            z-index: 9999;
-            background: #1e293b;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            pointer-events: none;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s;
-            direction: rtl;
-            text-align: right;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-            transform: translate(-50%, -100%);
-            margin-top: -8px;
-            white-space: nowrap;
-        }
-
-        .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -6px;
-            border-width: 6px;
-            border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-        }
-
-        .lexicon-pool {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .chip {
-            padding: 0.4rem 0.8rem;
-            background: var(--white);
-            border: 1px solid var(--grey-medium);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .cloze-input {
-            border: none;
-            border-bottom: 2px solid var(--grey-medium);
-            width: 80px;
-            text-align: center;
-            font-size: 1rem;
-            outline: none;
-            background: transparent;
-        }
+        /* Writing Styles */
+        .writing-box { width: 100%; min-height: 200px; padding: 1rem; border: 2px solid var(--grey-medium); border-radius: 8px; font-family: inherit; font-size: 1rem; margin-top: 1rem; outline: none; transition: border-color 0.3s; resize: vertical; box-sizing: border-box; }
+        .writing-box:focus { border-color: var(--primary-color); }
+        .lexicon-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+        .chip { padding: 0.4rem 0.8rem; background: var(--white); border: 1px solid var(--grey-medium); border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
+        .cloze-input { border: none; border-bottom: 2px solid var(--grey-medium); width: 100px; text-align: center; font-size: 1rem; outline: none; background: transparent; }
     </style>
 </head>
 <body>
@@ -237,30 +95,42 @@
         <button class="tab" data-panel="p3" aria-selected="false">✍️ 3. Écrire</button>
     </nav>
 
+    <!-- Écouter -->
     <section id="p1" class="panel active">
-        <p class="instructions">
-            <strong>Survolez un mot</strong> pour voir sa traduction.<br>
-            <strong>Cliquez sur un mot</strong> pour l'écouter.
-        </p>
-
+        <p class="instructions">Survolez un mot pour sa traduction, cliquez pour l'écouter individuellement.</p>
         <div class="controls-bar">
             <button id="btnPlay" class="primary" disabled>▶️ Tout lire</button>
             <button id="btnPause" disabled>⏸️ Pause</button>
             <button id="btnResume" disabled>▶️ Reprendre</button>
             <button id="btnStop" disabled>⏹️ Stop</button>
+            <span style="font-size: 0.8rem; margin-left: 10px;">Vitesse:</span>
             <input id="rate" type="range" min="0.5" max="1.5" step="0.1" value="0.9" style="width: 80px;">
         </div>
-
         <div id="text" class="text-content"></div>
     </section>
 
+    <!-- Comprendre -->
+    <section id="p2" class="panel">
+        <div class="instructions">Répondez aux questions sur le texte pour tester votre compréhension.</div>
+        <div id="quizContainer"></div>
+        <button id="btnCheckQuiz" class="primary" style="margin-top: 1rem;">Vérifier mes réponses</button>
+        <p id="quizScore" style="margin-top: 1rem; font-weight: bold;"></p>
+    </section>
+
+    <!-- Écrire -->
     <section id="p3" class="panel">
-        <div class="controls-bar">
-            <button id="checkCloze" class="primary">✔️ Vérifier</button>
-            <button id="resetCloze">↺ Recommencer</button>
-        </div>
-        <div id="clozeArea" class="text-content"></div>
+        <div class="instructions"><strong>A. Texte à trous :</strong> Complétez avec les mots du lexique.</div>
+        <div id="clozeArea" class="text-content" style="border-bottom: 1px solid #eee; margin-bottom: 1.5rem;"></div>
         <div id="lexicon" class="lexicon-pool"></div>
+        <button id="checkCloze" class="primary">Vérifier le texte à trous</button>
+
+        <div class="instructions" style="margin-top: 3rem;"><strong>B. Production libre :</strong> Racontez votre propre journée d'école (5 à 10 phrases).</div>
+        <p style="font-size: 0.9rem; color: var(--grey-dark);">Conseil : Utilisez <em>D'abord, Ensuite, Puis, Enfin...</em> pour structurer votre récit.</p>
+        <textarea class="writing-box" id="userText" placeholder="Par exemple : D'abord, je me lève à 6h30. Ensuite..."></textarea>
+        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+            <button id="btnCopyText">📋 Copier mon texte</button>
+            <button id="btnResetText">↺ Effacer</button>
+        </div>
     </section>
 </div>
 
@@ -268,12 +138,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Dictionnaire pour les traductions mot à mot
     const DICT = {
-        "ce": "هذا", "matin": "صباح", "je": "أنا", "me": "نفسي", "lève": "أستيقظ", "à": "في", "sept": "سبعة", "heures": "ساعات", "et": "و", "prends": "أتناول", "mon": "لي / الخاص بي", "petit-déjeuner": "فطور", "avec": "مع", "ma": "لي", "famille": "عائلة",
+        "ce": "هذا", "matin": "صباح", "je": "أنا", "me": "نفسي", "lève": "أستيقظ", "à": "في", "sept": "سبعة", "heures": "ساعات", "et": "و", "prends": "أتناول", "mon": "لي", "petit-déjeuner": "فطور", "avec": "مع", "ma": "لي", "famille": "عائلة",
         "ensuite": "بعد ذلك", "vais": "أذهب", "école": "مدرسة", "pied": "قدم", "frère": "أخ", "dans": "في", "première": "أولى", "heure": "ساعة", "nous": "نحن", "avons": "لدينا", "un": "واحد", "cours": "درس", "français": "فرنسي", "où": "حيث", "lisons": "نقرأ", "texte": "نص",
-        "puis": "ثم", "mathématiques": "رياضيات", "faisons": "نقوم بـ", "des": "الـ (للجمع)", "exercices": "تمارين", "au": "على", "tableau": "سبورة", "midi": "ظهر", "mange": "آكل", "la": "الـ", "cantine": "مقصف", "mes": "زملائي", "camarades": "زملاء", "classe": "فصل",
-        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ / من أجل", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة رياضية", "histoire": "تاريخ",
+        "puis": "ثم", "mathématiques": "رياضيات", "faisons": "نقوم بـ", "des": "الـ", "exercices": "تمارين", "au": "على", "tableau": "سبورة", "midi": "ظهر", "mange": "آكل", "la": "الـ", "cantine": "مقصف", "mes": "زملائي", "camarades": "زملاء", "classe": "فصل",
+        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة رياضية", "histoire": "تاريخ",
         "enfin": "أخيراً", "rentre": "أعود", "maison": "منزل", "fais": "أفعل", "devoirs": "واجبات", "regarde": "أشاهد", "peu": "قليلاً", "télévision": "تلفاز"
     };
 
@@ -288,9 +157,21 @@ document.addEventListener('DOMContentLoaded', () => {
         { fr: "Enfin, je rentre à la maison, je fais mes devoirs et je regarde un peu la télévision.", gaps: ["maison", "devoirs", "télévision"] }
     ];
 
+    const QUIZ_DATA = [
+        { q: "À quelle heure se lève l'élève ?", a: ["6 heures", "7 heures", "8 heures"], r: 1 },
+        { q: "Comment va-t-il à l'école ?", a: ["En bus", "En voiture", "À pied"], r: 2 },
+        { q: "Que font-ils en mathématiques ?", a: ["Ils lisent un texte", "Ils font des exercices", "Ils chantent"], r: 1 },
+        { q: "Où mangent-ils à midi ?", a: ["À la maison", "À la cantine", "Dans la rue"], r: 1 },
+        { q: "Que fait-il enfin à la maison ?", a: ["Il dort", "Il fait ses devoirs", "Il prépare le dîner"], r: 1 }
+    ];
+
     const tts = {
         synth: window.speechSynthesis,
         voice: null,
+        currentSentenceIdx: 0,
+        isPaused: false,
+        stopRequested: false,
+
         init() {
             return new Promise((resolve) => {
                 const load = () => {
@@ -303,17 +184,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => resolve(!!this.voice), 1000);
             });
         },
-        speak(text, rate, onBoundary, onEnd) {
-            this.synth.cancel();
-            const u = new SpeechSynthesisUtterance(text);
+        speakSentence(idx) {
+            if (idx >= DATA.length || this.stopRequested) {
+                this.resetButtons();
+                return;
+            }
+            this.currentSentenceIdx = idx;
+            const u = new SpeechSynthesisUtterance(DATA[idx].fr);
             u.voice = this.voice;
-            u.rate = rate;
-            u.onboundary = onBoundary;
-            u.onend = onEnd;
+            u.rate = parseFloat(document.getElementById('rate').value);
+
+            const sentEl = document.querySelector(`.sent[data-idx="${idx}"]`);
+            const words = sentEl.querySelectorAll('.word');
+
+            u.onboundary = (e) => {
+                if (e.name === 'word') {
+                    let charCount = 0;
+                    words.forEach(w => {
+                        w.classList.remove('highlight');
+                        if (e.charIndex >= charCount && e.charIndex < charCount + w.textContent.length) w.classList.add('highlight');
+                        charCount += w.textContent.length + 1;
+                    });
+                }
+            };
+
+            u.onend = () => {
+                document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
+                if (!this.isPaused && !this.stopRequested) {
+                    this.speakSentence(idx + 1);
+                }
+            };
+
             this.synth.speak(u);
+        },
+        resetButtons() {
+            btnPlay.disabled = false;
+            btnPause.disabled = true;
+            btnResume.disabled = true;
+            btnStop.disabled = true;
+            document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
         }
     };
 
+    // UI elements
     const textEl = document.getElementById('text');
     const tooltip = document.getElementById('tooltip');
     const btnPlay = document.getElementById('btnPlay');
@@ -321,110 +234,108 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnResume = document.getElementById('btnResume');
     const btnStop = document.getElementById('btnStop');
 
-    let isPaused = false;
-    let stopRequested = false;
-
-    // Génération du texte interactif
-    DATA.forEach((s, sIdx) => {
-        const pSpan = document.createElement('span');
-        pSpan.className = 'sent';
-        pSpan.dataset.idx = sIdx;
-        
-        const words = s.fr.split(/(\s+)/);
-        words.forEach(w => {
-            const cleanW = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
-            if (cleanW) {
+    // Section 1: Lecture et Traduction
+    DATA.forEach((s, idx) => {
+        const sentSpan = document.createElement('span');
+        sentSpan.className = 'sent';
+        sentSpan.dataset.idx = idx;
+        s.fr.split(/(\s+)/).forEach(w => {
+            const clean = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+            if (clean) {
                 const b = document.createElement('span');
                 b.className = 'word';
                 b.textContent = w;
-                
-                // --- ÉVÉNEMENTS SUR CHAQUE MOT ---
-                b.onmouseenter = () => {
-                    const translation = DICT[cleanW] || "...";
-                    tooltip.textContent = translation;
-                    tooltip.style.visibility = "visible";
-                    tooltip.style.opacity = 1;
-                    
+                b.onmouseenter = (e) => {
+                    e.stopImmediatePropagation();
+                    tooltip.textContent = DICT[clean] || "...";
                     const rect = b.getBoundingClientRect();
-                    tooltip.style.left = (rect.left + rect.width / 2) + "px";
+                    tooltip.style.left = (rect.left + rect.width/2) + "px";
                     tooltip.style.top = rect.top + "px";
+                    tooltip.style.visibility = "visible"; tooltip.style.opacity = 1;
                 };
-
-                b.onmouseleave = () => {
-                    tooltip.style.opacity = 0;
-                    tooltip.style.visibility = "hidden";
+                b.onmouseleave = () => { tooltip.style.opacity = 0; tooltip.style.visibility = "hidden"; };
+                b.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    const singleU = new SpeechSynthesisUtterance(clean);
+                    singleU.voice = tts.voice;
+                    singleU.rate = parseFloat(document.getElementById('rate').value);
+                    tts.synth.cancel();
+                    tts.synth.speak(singleU);
                 };
-
-                b.onclick = (e) => {
-                    e.stopPropagation();
-                    tts.speak(cleanW, parseFloat(document.getElementById('rate').value));
-                };
-
-                pSpan.appendChild(b);
-            } else {
-                pSpan.appendChild(document.createTextNode(w));
-            }
+                sentSpan.appendChild(b);
+            } else { sentSpan.appendChild(document.createTextNode(w)); }
         });
-        textEl.appendChild(pSpan);
-        textEl.appendChild(document.createTextNode(' '));
+        textEl.appendChild(sentSpan); textEl.appendChild(document.createTextNode(' '));
     });
 
-    // Fonctions de lecture
-    function clearHighlights() {
-        document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
-        document.querySelectorAll('.sent').forEach(s => s.classList.remove('active'));
-    }
-
-    function playSentence(idx) {
-        if (idx >= DATA.length || stopRequested) {
-            btnPlay.disabled = false;
-            btnStop.disabled = true;
-            clearHighlights();
-            return;
-        }
-        clearHighlights();
-        const sentEl = textEl.querySelector(`.sent[data-idx="${idx}"]`);
-        sentEl.classList.add('active');
-
-        tts.speak(DATA[idx].fr, parseFloat(document.getElementById('rate').value), (e) => {
-            const words = sentEl.querySelectorAll('.word');
-            let charCount = 0;
-            words.forEach(w => {
-                w.classList.remove('highlight');
-                if (e.charIndex >= charCount && e.charIndex < charCount + w.textContent.length) {
-                    w.classList.add('highlight');
-                }
-                charCount += w.textContent.length + 1;
-            });
-        }, () => {
-            if (!isPaused) playSentence(idx + 1);
-        });
-    }
-
     btnPlay.onclick = () => { 
-        stopRequested = false; 
-        isPaused = false; 
+        tts.stopRequested = false;
+        tts.isPaused = false;
         btnPlay.disabled = true; 
         btnPause.disabled = false;
         btnStop.disabled = false;
-        playSentence(0); 
+        tts.speakSentence(0); 
     };
-    btnPause.onclick = () => { isPaused = true; tts.synth.pause(); btnPause.disabled = true; btnResume.disabled = false; };
-    btnResume.onclick = () => { isPaused = false; tts.synth.resume(); btnResume.disabled = true; btnPause.disabled = false; };
-    btnStop.onclick = () => { stopRequested = true; tts.synth.cancel(); btnPlay.disabled = false; btnPause.disabled = true; btnResume.disabled = true; btnStop.disabled = true; clearHighlights(); };
 
-    // Gestion Tabs simple
-    document.querySelectorAll('.tab').forEach(t => {
-        t.onclick = () => {
-            document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            t.setAttribute('aria-selected', 'true');
-            document.getElementById(t.dataset.panel).classList.add('active');
-            if(t.dataset.panel !== 'p1') tts.synth.cancel();
-        };
+    btnPause.onclick = () => {
+        tts.isPaused = true;
+        tts.synth.pause();
+        btnPause.disabled = true;
+        btnResume.disabled = false;
+    };
+
+    btnResume.onclick = () => {
+        tts.isPaused = false;
+        tts.synth.resume();
+        btnResume.disabled = true;
+        btnPause.disabled = false;
+    };
+
+    btnStop.onclick = () => { 
+        tts.stopRequested = true;
+        tts.synth.cancel(); 
+        tts.resetButtons();
+    };
+
+    // Section 2: Quiz
+    const quizContainer = document.getElementById('quizContainer');
+    QUIZ_DATA.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-item';
+        div.innerHTML = `<div class="quiz-question">${i+1}. ${q.q}</div><div class="quiz-options"></div>`;
+        const opts = div.querySelector('.quiz-options');
+        q.a.forEach((opt, oi) => {
+            const oDiv = document.createElement('div');
+            oDiv.className = 'quiz-opt';
+            oDiv.textContent = opt;
+            oDiv.onclick = () => {
+                if (document.getElementById('quizScore').textContent !== "") return; // Disable after check
+                div.querySelectorAll('.quiz-opt').forEach(x => x.classList.remove('selected'));
+                oDiv.classList.add('selected');
+            };
+            opts.appendChild(oDiv);
+        });
+        quizContainer.appendChild(div);
     });
 
-    // Initialisation Cloze
+    document.getElementById('btnCheckQuiz').onclick = () => {
+        let score = 0;
+        document.querySelectorAll('.quiz-item').forEach((item, i) => {
+            const selected = item.querySelector('.quiz-opt.selected');
+            const options = item.querySelectorAll('.quiz-opt');
+            const correctIndex = QUIZ_DATA[i].r;
+            options[correctIndex].classList.add('correct');
+            if (selected) {
+                const selectedIndex = Array.from(options).indexOf(selected);
+                if (selectedIndex === correctIndex) score++;
+                else selected.classList.add('wrong');
+            }
+        });
+        document.getElementById('quizScore').textContent = `Score final : ${score} / ${QUIZ_DATA.length}`;
+        document.getElementById('btnCheckQuiz').disabled = true;
+    };
+
+    // Section 3: Writing
     function initCloze() {
         const area = document.getElementById('clozeArea');
         const lex = document.getElementById('lexicon');
@@ -434,13 +345,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let html = s.fr;
             s.gaps.forEach(g => {
                 html = html.replace(new RegExp(`\\b${g}\\b`, 'i'), `<input class="cloze-input" data-ans="${g}">`);
-                gWords.push(g);
+                if (!gWords.includes(g)) gWords.push(g);
             });
             const p = document.createElement('p'); p.innerHTML = html; area.appendChild(p);
         });
         gWords.sort().forEach(w => {
             const c = document.createElement('span'); c.className = 'chip'; c.textContent = w;
-            c.onclick = () => { if(document.activeElement.tagName === 'INPUT') document.activeElement.value = w; };
+            c.onclick = () => { 
+                const activeInput = document.querySelector('.cloze-input:focus') || document.querySelector('.cloze-input[value=""], .cloze-input:not([value])');
+                if(activeInput) activeInput.value = w; 
+            };
             lex.appendChild(c);
         });
     }
@@ -449,9 +363,44 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.cloze-input').forEach(i => {
             const ok = i.value.trim().toLowerCase() === i.dataset.ans.toLowerCase();
             i.style.borderBottomColor = ok ? 'var(--success-color)' : 'var(--error-color)';
+            i.style.backgroundColor = ok ? 'var(--success-light)' : 'var(--error-light)';
         });
     };
-    document.getElementById('resetCloze').onclick = initCloze;
+
+    document.getElementById('btnCopyText').onclick = () => {
+        const val = document.getElementById('userText').value;
+        if(!val) return;
+        // Fallback copy
+        const el = document.createElement('textarea');
+        el.value = val;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        
+        const btn = document.getElementById('btnCopyText');
+        const old = btn.textContent;
+        btn.textContent = "✅ Texte copié !";
+        setTimeout(() => btn.textContent = old, 2000);
+    };
+
+    document.getElementById('btnResetText').onclick = () => {
+        if(confirm("Voulez-vous vraiment effacer votre production écrite ?")) {
+            document.getElementById('userText').value = "";
+        }
+    };
+
+    // Tab Logic
+    document.querySelectorAll('.tab').forEach(t => {
+        t.onclick = () => {
+            document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            t.setAttribute('aria-selected', 'true');
+            document.getElementById(t.dataset.panel).classList.add('active');
+            tts.synth.cancel();
+            tts.resetButtons();
+        };
+    });
 
     tts.init().then(ok => { if(ok) btnPlay.disabled = false; });
     initCloze();
