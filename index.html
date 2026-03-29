@@ -38,6 +38,7 @@
             background-color: var(--white);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
+            min-height: 600px;
         }
 
         h1 { font-size: 1.8rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.75rem; }
@@ -46,8 +47,8 @@
         .tab { border: none; background: none; padding: 0.75rem 1.25rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--grey-dark); border-bottom: 3px solid transparent; transition: all 0.2s ease; margin-bottom: -2px; }
         .tab[aria-selected="true"] { color: var(--primary-color); border-bottom-color: var(--primary-color); }
 
-        .panel { display: none; animation: fadeIn 0.3s ease-out; }
-        .panel.active { display: block; }
+        .panel { display: none; }
+        .panel.active { display: block !important; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .instructions { background-color: var(--primary-light); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem; border-left: 4px solid var(--primary-color); }
@@ -58,30 +59,30 @@
         button:hover:not(:disabled) { filter: brightness(0.9); }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .text-content { font-size: 1.15rem; line-height: 2.8; padding: 1rem; }
+        .text-content { font-size: 1.15rem; line-height: 2.8; padding: 1rem; min-height: 50px; }
         .word { display: inline-block; border-radius: 4px; padding: 0 4px; cursor: pointer; transition: 0.2s; }
         .word:hover { background: var(--primary-color); color: white; }
-        .word.highlight { background: var(--primary-color); color: white; }
+        .word.highlight { background: var(--primary-color) !important; color: white !important; }
 
         .tooltip { position: fixed; z-index: 10000; background: #1e293b; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.95rem; pointer-events: none; visibility: hidden; opacity: 0; transition: opacity 0.1s; direction: rtl; transform: translate(-50%, -100%); margin-top: -12px; white-space: nowrap; }
         .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: #1e293b transparent transparent transparent; }
 
         /* Quiz Styles */
+        #quizContainer { min-height: 100px; display: block; }
         .quiz-item { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--grey-medium); border-radius: 8px; }
         .quiz-question { font-weight: 600; margin-bottom: 0.5rem; }
         .quiz-options { display: grid; gap: 0.5rem; }
         .quiz-opt { padding: 0.5rem; border: 1px solid var(--grey-medium); border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .quiz-opt:hover { background: var(--primary-light); }
         .quiz-opt.selected { border-color: var(--primary-color); background: var(--primary-light); }
-        .quiz-opt.correct { background: var(--success-light); border-color: var(--success-color); color: var(--success-color); font-weight: bold; }
-        .quiz-opt.wrong { background: var(--error-light); border-color: var(--error-color); color: var(--error-color); }
+        .quiz-opt.correct { background: var(--success-light) !important; border-color: var(--success-color) !important; color: var(--success-color) !important; font-weight: bold; }
+        .quiz-opt.wrong { background: var(--error-light) !important; border-color: var(--error-color) !important; color: var(--error-color) !important; }
 
         /* Writing Styles */
         .writing-box { width: 100%; min-height: 200px; padding: 1rem; border: 2px solid var(--grey-medium); border-radius: 8px; font-family: inherit; font-size: 1rem; margin-top: 1rem; outline: none; transition: border-color 0.3s; resize: vertical; box-sizing: border-box; display: block; }
-        .writing-box:focus { border-color: var(--primary-color); }
-        .lexicon-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+        .lexicon-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; min-height: 30px; }
         .chip { padding: 0.4rem 0.8rem; background: var(--white); border: 1px solid var(--grey-medium); border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
-        .cloze-input { border: none; border-bottom: 2px solid var(--grey-medium); width: 100px; text-align: center; font-size: 1rem; outline: none; background: transparent; }
+        .cloze-input { border: none; border-bottom: 2px solid var(--grey-medium); width: 110px; text-align: center; font-size: 1rem; outline: none; background: transparent; }
     </style>
 </head>
 <body>
@@ -97,22 +98,22 @@
 
     <!-- Écouter -->
     <section id="p1" class="panel active">
-        <p class="instructions">Survolez un mot pour sa traduction, cliquez pour l'écouter individuellement.</p>
+        <div class="instructions">Survolez un mot pour sa traduction, cliquez pour l'écouter individuellement.</div>
         <div class="controls-bar">
-            <button id="btnPlay" class="primary" disabled>▶️ Tout lire</button>
+            <button id="btnPlay" class="primary">▶️ Tout lire</button>
             <button id="btnPause" disabled>⏸️ Pause</button>
             <button id="btnResume" disabled>▶️ Reprendre</button>
             <button id="btnStop" disabled>⏹️ Stop</button>
             <span style="font-size: 0.8rem; margin-left: 10px;">Vitesse:</span>
             <input id="rate" type="range" min="0.5" max="1.5" step="0.1" value="0.9" style="width: 80px;">
         </div>
-        <div id="text" class="text-content"></div>
+        <div id="text" class="text-content">Chargement du texte...</div>
     </section>
 
     <!-- Comprendre -->
     <section id="p2" class="panel">
         <div class="instructions">Répondez aux questions sur le texte pour tester votre compréhension.</div>
-        <div id="quizContainer"></div>
+        <div id="quizContainer">Chargement des questions...</div>
         <button id="btnCheckQuiz" class="primary" style="margin-top: 1rem;">Vérifier mes réponses</button>
         <p id="quizScore" style="margin-top: 1rem; font-weight: bold;"></p>
     </section>
@@ -120,14 +121,13 @@
     <!-- Écrire -->
     <section id="p3" class="panel">
         <div class="instructions"><strong>A. Texte à trous :</strong> Complétez avec les mots du lexique.</div>
-        <div id="clozeArea" class="text-content" style="border-bottom: 1px solid #eee; margin-bottom: 1.5rem;"></div>
+        <div id="clozeArea" class="text-content" style="border-bottom: 1px solid #eee; margin-bottom: 1.5rem;">Chargement...</div>
         <div id="lexicon" class="lexicon-pool"></div>
         <button id="checkCloze" class="primary">Vérifier le texte à trous</button>
 
         <div id="freeWritingSection" style="margin-top: 3rem;">
             <div class="instructions"><strong>B. Production libre :</strong> Racontez votre propre journée d'école (5 à 10 phrases).</div>
-            <p style="font-size: 0.9rem; color: var(--grey-dark);">Conseil : Utilisez <em>D'abord, Ensuite, Puis, Enfin...</em> pour structurer votre récit.</p>
-            <textarea class="writing-box" id="userText" placeholder="Par exemple : D'abord, je me lève à 6h30. Ensuite..."></textarea>
+            <textarea class="writing-box" id="userText" placeholder="D'abord, je me lève à..."></textarea>
             <div style="margin-top: 1rem; display: flex; gap: 1rem;">
                 <button id="btnCopyText">📋 Copier mon texte</button>
                 <button id="btnResetText">↺ Effacer</button>
@@ -139,140 +139,114 @@
 <div id="tooltip" class="tooltip"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Données de base
-    const DICT = {
-        "ce": "هذا", "matin": "صباح", "je": "أنا", "me": "نفسي", "lève": "أستيقظ", "à": "في", "sept": "سبعة", "heures": "ساعات", "et": "و", "prends": "أتناول", "mon": "لي", "petit-déjeuner": "فطور", "avec": "مع", "ma": "لي", "famille": "عائلة",
-        "ensuite": "بعد ذلك", "vais": "أذهب", "école": "مدرسة", "pied": "قدم", "frère": "أخ", "dans": "في", "première": "أولى", "heure": "ساعة", "nous": "نحن", "avons": "لدينا", "un": "واحد", "cours": "درس", "français": "فرنسي", "où": "حيث", "lisons": "نقرأ", "texte": "نص",
-        "puis": "ثم", "mathématiques": "رياضيات", "faisons": "نقوم بـ", "des": "الـ", "exercices": "تمارين", "au": "على", "tableau": "سبورة", "midi": "ظهر", "mange": "آكل", "la": "الـ", "cantine": "مقصف", "mes": "زملائي", "camarades": "زملاء", "classe": "فصل",
-        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة gymnase", "histoire": "تاريخ",
-        "enfin": "أخيراً", "rentre": "أعود", "maison": "منزل", "fais": "أفعل", "devoirs": "واجبات", "regarde": "أشاهد", "peu": "قليلاً", "télévision": "تلفاز"
-    };
+// --- DONNÉES ---
+const DICT = {"ce":"هذا","matin":"صباح","je":"أنا","me":"نفسي","lève":"أستيقظ","à":"في","sept":"سبعة","heures":"ساعات","et":"و","prends":"أتناول","mon":"لي","petit-déjeuner":"فطور","avec":"مع","ma":"لي","famille":"عائلة","ensuite":"بعد ذلك","vais":"أذهب","école":"مدرسة","pied":"قدم","frère":"أخ","dans":"في","première":"أولى","heure":"ساعة","nous":"نحن","avons":"لدينا","un":"واحد","cours":"درس","français":"فرنسي","où":"حيث","lisons":"نقرأ","texte":"نص","puis":"ثم","mathématiques":"رياضيات","faisons":"نقوم بـ","des":"الـ","exercices":"تمارين","au":"على","tableau":"سبورة","midi":"ظهر","mange":"آكل","la":"الـ","cantine":"مقصف","mes":"زملائي","camarades":"زملاء","classe":"فصل","après":"بعد","le":"الـ","repas":"وجبة","allons":"نذهب","cour":"ساحة","pour":"لـ","jouer":"لعب","discuter":"حديث","après-midi":"بعد الظهر","sport":"رياضة","gymnase":"صالة رياضية","histoire":"تاريخ","enfin":"أخيراً","rentre":"أعود","maison":"منزل","fais":"أفعل","devoirs":"واجبات","regarde":"أشاهد","peu":"قليلاً","télévision":"تلفاز"};
 
-    const DATA = [
-        { fr: "Ce matin, je me lève à sept heures et je prends mon petit-déjeuner avec ma famille.", gaps: ["lève", "famille"] },
-        { fr: "Ensuite, je vais à l’école à pied avec mon frère.", gaps: ["école", "frère"] },
-        { fr: "Dans la première heure, nous avons un cours de français où nous lisons un texte.", gaps: ["cours", "lisons"] },
-        { fr: "Puis je vais en mathématiques, et nous faisons des exercices au tableau.", gaps: ["exercices", "tableau"] },
-        { fr: "À midi, je mange à la cantine avec mes camarades de classe.", gaps: ["cantine", "camarades"] },
-        { fr: "Après le repas, nous allons dans la cour pour jouer et discuter.", gaps: ["cour", "jouer"] },
-        { fr: "L’après-midi, nous avons sport au gymnase et un cours d’histoire.", gaps: ["sport", "gymnase", "histoire"] },
-        { fr: "Enfin, je rentre à la maison, je fais mes devoirs et je regarde un peu la télévision.", gaps: ["maison", "devoirs", "télévision"] }
-    ];
+const DATA = [
+    { fr: "Ce matin, je me lève à sept heures et je prends mon petit-déjeuner avec ma famille.", gaps: ["lève", "famille"] },
+    { fr: "Ensuite, je vais à l’école à pied avec mon frère.", gaps: ["école", "frère"] },
+    { fr: "Dans la première heure, nous avons un cours de français où nous lisons un texte.", gaps: ["cours", "lisons"] },
+    { fr: "Puis je vais en mathématiques, et nous faisons des exercices au tableau.", gaps: ["exercices", "tableau"] },
+    { fr: "À midi, je mange à la cantine avec mes camarades de classe.", gaps: ["cantine", "camarades"] },
+    { fr: "Après le repas, nous allons dans la cour pour jouer et discuter.", gaps: ["cour", "jouer"] },
+    { fr: "L’après-midi, nous avons sport au gymnase et un cours d’histoire.", gaps: ["sport", "gymnase", "histoire"] },
+    { fr: "Enfin, je rentre à la maison, je fais mes devoirs et je regarde un peu la télévision.", gaps: ["maison", "devoirs", "télévision"] }
+];
 
-    const QUIZ_DATA = [
-        { q: "À quelle heure se lève l'élève ?", a: ["6 heures", "7 heures", "8 heures"], r: 1 },
-        { q: "Comment va-t-il à l'école ?", a: ["En bus", "En voiture", "À pied"], r: 2 },
-        { q: "Que font-ils en mathématiques ?", a: ["Ils lisent un texte", "Ils font des exercices", "Ils chantent"], r: 1 },
-        { q: "Où mangent-ils à midi ?", a: ["À la maison", "À la cantine", "Dans la rue"], r: 1 },
-        { q: "Que fait-il enfin à la maison ?", a: ["Il dort", "Il fait ses devoirs", "Il prépare le dîner"], r: 1 }
-    ];
+const QUIZ_DATA = [
+    { q: "À quelle heure se lève l'élève ?", a: ["6 heures", "7 heures", "8 heures"], r: 1 },
+    { q: "Comment va-t-il à l'école ?", a: ["En bus", "En voiture", "À pied"], r: 2 },
+    { q: "Que font-ils en mathématiques ?", a: ["Ils lisent un texte", "Ils font des exercices", "Ils chantent"], r: 1 },
+    { q: "Où mangent-ils à midi ?", a: ["À la maison", "À la cantine", "Dans la rue"], r: 1 },
+    { q: "Que fait-il enfin à la maison ?", a: ["Il dort", "Il fait ses devoirs", "Il prépare le dîner"], r: 1 }
+];
 
-    // 2. Gestion TTS
-    const tts = {
-        synth: window.speechSynthesis,
-        voice: null,
-        currentSentenceIdx: 0,
-        isPaused: false,
-        stopRequested: false,
-
-        init() {
-            return new Promise((resolve) => {
-                const load = () => {
-                    const voices = this.synth.getVoices();
-                    this.voice = voices.find(v => v.lang.startsWith('fr')) || voices[0];
-                    if (this.voice) resolve(true);
-                };
-                load();
-                if (this.synth.onvoiceschanged !== undefined) this.synth.onvoiceschanged = load;
-                setTimeout(() => resolve(!!this.voice), 1000);
-            });
-        },
-        speakSentence(idx) {
-            if (idx >= DATA.length || this.stopRequested) {
-                this.resetButtons();
-                return;
+// --- LOGIQUE TTS ---
+const tts = {
+    synth: window.speechSynthesis,
+    voice: null,
+    isPaused: false,
+    stopRequested: false,
+    init() {
+        return new Promise((resolve) => {
+            const getV = () => {
+                const vs = this.synth.getVoices();
+                this.voice = vs.find(v => v.lang.startsWith('fr')) || vs[0];
+                if (this.voice) resolve(true);
+            };
+            getV();
+            if (this.synth.onvoiceschanged !== undefined) this.synth.onvoiceschanged = getV;
+            setTimeout(() => resolve(true), 1500); // Force resolve
+        });
+    },
+    speakSentence(idx) {
+        if (idx >= DATA.length || this.stopRequested) { this.resetUI(); return; }
+        this.synth.cancel();
+        const u = new SpeechSynthesisUtterance(DATA[idx].fr);
+        u.voice = this.voice;
+        u.rate = parseFloat(document.getElementById('rate').value) || 0.9;
+        
+        const words = document.querySelector(`.sent[data-idx="${idx}"]`).querySelectorAll('.word');
+        u.onboundary = (e) => {
+            if (e.name === 'word') {
+                let charPos = 0;
+                words.forEach(w => {
+                    w.classList.remove('highlight');
+                    if (e.charIndex >= charPos && e.charIndex < charPos + w.textContent.length) w.classList.add('highlight');
+                    charPos += w.textContent.length + 1;
+                });
             }
-            this.currentSentenceIdx = idx;
-            const u = new SpeechSynthesisUtterance(DATA[idx].fr);
-            u.voice = this.voice;
-            u.rate = parseFloat(document.getElementById('rate').value);
+        };
+        u.onend = () => {
+            words.forEach(w => w.classList.remove('highlight'));
+            if (!this.isPaused && !this.stopRequested) this.speakSentence(idx + 1);
+        };
+        this.synth.speak(u);
+    },
+    resetUI() {
+        document.getElementById('btnPlay').disabled = false;
+        document.getElementById('btnPause').disabled = true;
+        document.getElementById('btnResume').disabled = true;
+        document.getElementById('btnStop').disabled = true;
+        document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
+    }
+};
 
-            const sentEl = document.querySelector(`.sent[data-idx="${idx}"]`);
-            const words = sentEl.querySelectorAll('.word');
-
-            u.onboundary = (e) => {
-                if (e.name === 'word') {
-                    let charCount = 0;
-                    words.forEach(w => {
-                        w.classList.remove('highlight');
-                        if (e.charIndex >= charCount && e.charIndex < charCount + w.textContent.length) w.classList.add('highlight');
-                        charCount += w.textContent.length + 1;
-                    });
-                }
-            };
-
-            u.onend = () => {
-                document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
-                if (!this.isPaused && !this.stopRequested) {
-                    this.speakSentence(idx + 1);
-                }
-            };
-            this.synth.speak(u);
-        },
-        resetButtons() {
-            btnPlay.disabled = false;
-            btnPause.disabled = true;
-            btnResume.disabled = true;
-            btnStop.disabled = true;
-            document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
-        }
-    };
-
-    const textEl = document.getElementById('text');
-    const tooltip = document.getElementById('tooltip');
-    const btnPlay = document.getElementById('btnPlay');
-    const btnPause = document.getElementById('btnPause');
-    const btnResume = document.getElementById('btnResume');
-    const btnStop = document.getElementById('btnStop');
-
-    // 3. Initialisation Section 1 (Texte)
-    function initText() {
+// --- INITIALISATION DES SECTIONS ---
+function initAll() {
+    console.log("Initialisation des sections...");
+    
+    // 1. Texte (Section 1)
+    try {
+        const textEl = document.getElementById('text');
         textEl.innerHTML = "";
         DATA.forEach((s, idx) => {
-            const sentSpan = document.createElement('span');
-            sentSpan.className = 'sent';
-            sentSpan.dataset.idx = idx;
+            const span = document.createElement('span');
+            span.className = 'sent';
+            span.dataset.idx = idx;
             s.fr.split(/(\s+)/).forEach(w => {
                 const clean = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
                 if (clean) {
                     const b = document.createElement('span');
                     b.className = 'word';
                     b.textContent = w;
-                    b.onmouseenter = (e) => {
-                        tooltip.textContent = DICT[clean] || "...";
-                        const rect = b.getBoundingClientRect();
-                        tooltip.style.left = (rect.left + rect.width/2) + "px";
-                        tooltip.style.top = rect.top + "px";
-                        tooltip.style.visibility = "visible"; tooltip.style.opacity = 1;
+                    b.onmouseenter = (e) => showTooltip(e, clean, b);
+                    b.onmouseleave = hideTooltip;
+                    b.onclick = () => {
+                        const u = new SpeechSynthesisUtterance(clean);
+                        u.voice = tts.voice;
+                        u.rate = 0.9;
+                        tts.synth.cancel(); tts.synth.speak(u);
                     };
-                    b.onmouseleave = () => { tooltip.style.opacity = 0; tooltip.style.visibility = "hidden"; };
-                    b.onclick = (e) => { 
-                        const singleU = new SpeechSynthesisUtterance(clean);
-                        singleU.voice = tts.voice;
-                        singleU.rate = parseFloat(document.getElementById('rate').value);
-                        tts.synth.cancel();
-                        tts.synth.speak(singleU);
-                    };
-                    sentSpan.appendChild(b);
-                } else { sentSpan.appendChild(document.createTextNode(w)); }
+                    span.appendChild(b);
+                } else span.appendChild(document.createTextNode(w));
             });
-            textEl.appendChild(sentSpan); textEl.appendChild(document.createTextNode(' '));
+            textEl.appendChild(span); textEl.appendChild(document.createTextNode(' '));
         });
-    }
+    } catch(e) { console.error("Erreur Section 1", e); }
 
-    // 4. Initialisation Section 2 (Quiz)
-    function initQuiz() {
+    // 2. Quiz (Section 2)
+    try {
         const quizContainer = document.getElementById('quizContainer');
         quizContainer.innerHTML = "";
         QUIZ_DATA.forEach((q, i) => {
@@ -285,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 oDiv.className = 'quiz-opt';
                 oDiv.textContent = opt;
                 oDiv.onclick = () => {
-                    if (document.getElementById('quizScore').textContent !== "") return;
+                    if (document.getElementById('quizScore').textContent) return;
                     div.querySelectorAll('.quiz-opt').forEach(x => x.classList.remove('selected'));
                     oDiv.classList.add('selected');
                 };
@@ -293,10 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             quizContainer.appendChild(div);
         });
-    }
+    } catch(e) { console.error("Erreur Section 2", e); }
 
-    // 5. Initialisation Section 3 (Écriture)
-    function initCloze() {
+    // 3. Écriture (Section 3)
+    try {
         const area = document.getElementById('clozeArea');
         const lex = document.getElementById('lexicon');
         area.innerHTML = ""; lex.innerHTML = "";
@@ -304,96 +278,110 @@ document.addEventListener('DOMContentLoaded', () => {
         DATA.forEach(s => {
             let html = s.fr;
             s.gaps.forEach(g => {
-                html = html.replace(new RegExp(`\\b${g}\\b`, 'i'), `<input class="cloze-input" data-ans="${g}">`);
+                html = html.replace(new RegExp(`\\b${g}\\b`, 'i'), `<input class="cloze-input" data-ans="${g}" placeholder="...">`);
                 if (!gWords.includes(g)) gWords.push(g);
             });
             const p = document.createElement('p'); p.innerHTML = html; area.appendChild(p);
         });
         gWords.sort().forEach(w => {
             const c = document.createElement('span'); c.className = 'chip'; c.textContent = w;
-            c.onclick = () => { 
-                const activeInput = document.querySelector('.cloze-input:focus') || document.querySelector('.cloze-input[value=""], .cloze-input:not([value])');
-                if(activeInput) activeInput.value = w; 
+            c.onclick = () => {
+                const target = document.querySelector('.cloze-input:focus') || document.querySelector('.cloze-input[value=""], .cloze-input:not([value])');
+                if (target) target.value = w;
             };
             lex.appendChild(c);
         });
-    }
+    } catch(e) { console.error("Erreur Section 3", e); }
+}
 
-    // Contrôles Audio
-    btnPlay.onclick = () => { 
+// --- TOOLTIP ---
+function showTooltip(e, word, el) {
+    const tt = document.getElementById('tooltip');
+    tt.textContent = DICT[word] || "...";
+    const r = el.getBoundingClientRect();
+    tt.style.left = (r.left + r.width/2) + "px";
+    tt.style.top = r.top + "px";
+    tt.style.visibility = "visible"; tt.style.opacity = 1;
+}
+function hideTooltip() { 
+    const tt = document.getElementById('tooltip');
+    tt.style.opacity = 0; tt.style.visibility = "hidden"; 
+}
+
+// --- BOUTONS ---
+window.onload = () => {
+    initAll();
+    tts.init();
+
+    document.getElementById('btnPlay').onclick = () => {
         tts.stopRequested = false; tts.isPaused = false;
-        btnPlay.disabled = true; btnPause.disabled = false; btnStop.disabled = false;
-        tts.speakSentence(0); 
+        document.getElementById('btnPlay').disabled = true;
+        document.getElementById('btnPause').disabled = false;
+        document.getElementById('btnStop').disabled = false;
+        tts.speakSentence(0);
     };
-    btnPause.onclick = () => { tts.isPaused = true; tts.synth.pause(); btnPause.disabled = true; btnResume.disabled = false; };
-    btnResume.onclick = () => { tts.isPaused = false; tts.synth.resume(); btnResume.disabled = true; btnPause.disabled = false; };
-    btnStop.onclick = () => { tts.stopRequested = true; tts.synth.cancel(); tts.resetButtons(); };
 
-    // Vérification Quiz
+    document.getElementById('btnPause').onclick = () => {
+        tts.isPaused = true; tts.synth.pause();
+        document.getElementById('btnPause').disabled = true;
+        document.getElementById('btnResume').disabled = false;
+    };
+
+    document.getElementById('btnResume').onclick = () => {
+        tts.isPaused = false; tts.synth.resume();
+        document.getElementById('btnResume').disabled = true;
+        document.getElementById('btnPause').disabled = false;
+    };
+
+    document.getElementById('btnStop').onclick = () => {
+        tts.stopRequested = true; tts.synth.cancel(); tts.resetUI();
+    };
+
     document.getElementById('btnCheckQuiz').onclick = () => {
-        let score = 0;
-        document.querySelectorAll('.quiz-item').forEach((item, i) => {
-            const selected = item.querySelector('.quiz-opt.selected');
-            const options = item.querySelectorAll('.quiz-opt');
-            const correctIndex = QUIZ_DATA[i].r;
-            options[correctIndex].classList.add('correct');
-            if (selected) {
-                const selectedIndex = Array.from(options).indexOf(selected);
-                if (selectedIndex === correctIndex) score++;
-                else selected.classList.add('wrong');
+        let s = 0;
+        document.querySelectorAll('.quiz-item').forEach((it, i) => {
+            const sel = it.querySelector('.quiz-opt.selected');
+            const opts = it.querySelectorAll('.quiz-opt');
+            opts[QUIZ_DATA[i].r].classList.add('correct');
+            if (sel) {
+                if (Array.from(opts).indexOf(sel) === QUIZ_DATA[i].r) s++;
+                else sel.classList.add('wrong');
             }
         });
-        document.getElementById('quizScore').textContent = `Score final : ${score} / ${QUIZ_DATA.length}`;
-        document.getElementById('btnCheckQuiz').disabled = true;
+        document.getElementById('quizScore').textContent = `Résultat : ${s} / ${QUIZ_DATA.length}`;
     };
 
-    // Vérification Texte à trous
     document.getElementById('checkCloze').onclick = () => {
         document.querySelectorAll('.cloze-input').forEach(i => {
             const ok = i.value.trim().toLowerCase() === i.dataset.ans.toLowerCase();
-            i.style.borderBottomColor = ok ? 'var(--success-color)' : 'var(--error-color)';
             i.style.backgroundColor = ok ? 'var(--success-light)' : 'var(--error-light)';
+            i.style.borderColor = ok ? 'var(--success-color)' : 'var(--error-color)';
         });
     };
 
-    // Copie texte production libre
     document.getElementById('btnCopyText').onclick = () => {
-        const val = document.getElementById('userText').value;
-        if(!val) return;
-        const el = document.createElement('textarea');
-        el.value = val;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        const btn = document.getElementById('btnCopyText');
-        const old = btn.textContent;
-        btn.textContent = "✅ Texte copié !";
-        setTimeout(() => btn.textContent = old, 2000);
+        const t = document.getElementById('userText');
+        t.select(); document.execCommand('copy');
+        const b = document.getElementById('btnCopyText');
+        const old = b.textContent; b.textContent = "Copié !";
+        setTimeout(() => b.textContent = old, 2000);
     };
 
     document.getElementById('btnResetText').onclick = () => {
-        if(confirm("Effacer votre production libre ?")) document.getElementById('userText').value = "";
+        if(confirm("Effacer ?")) document.getElementById('userText').value = "";
     };
 
-    // Navigation Onglets
-    document.querySelectorAll('.tab').forEach(t => {
-        t.onclick = () => {
-            document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            t.setAttribute('aria-selected', 'true');
-            document.getElementById(t.dataset.panel).classList.add('active');
-            tts.synth.cancel();
-            tts.resetButtons();
+    // Tabs
+    document.querySelectorAll('.tab').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', 'false'));
+            document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+            btn.setAttribute('aria-selected', 'true');
+            document.getElementById(btn.dataset.panel).classList.add('active');
+            tts.synth.cancel(); tts.resetUI();
         };
     });
-
-    // Lancement
-    tts.init().then(ok => { if(ok) btnPlay.disabled = false; });
-    initText();
-    initQuiz();
-    initCloze();
-});
+};
 </script>
 </body>
 </html>
