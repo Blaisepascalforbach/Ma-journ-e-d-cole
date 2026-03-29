@@ -4,464 +4,458 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activité A2 : Ma Journée d'École</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
         :root {
-            --primary: #4f46e5;
-            --primary-light: #eef2ff;
-            --success: #10b981;
-            --error: #ef4444;
-            --bg: #f8fafc;
+            --primary-color: #4a6cfd;
+            --primary-light: #eff3fe;
+            --success-color: #27ae60;
+            --success-light: #eaf7f0;
+            --error-color: #e74c3c;
+            --error-light: #fdedec;
+            --grey-light: #f8fafc;
+            --grey-medium: #e2e8f0;
+            --grey-dark: #64748b;
+            --text-color: #1e293b;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            color: #1e293b;
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            background-color: var(--grey-light);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        .tab-active {
-            border-bottom: 3px solid var(--primary);
-            color: var(--primary);
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--grey-medium);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            border: none;
+            background: none;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-size: 0.95rem;
             font-weight: 600;
+            color: var(--grey-dark);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            margin-bottom: -2px;
+        }
+
+        .tab[aria-selected="true"] {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .instructions {
+            background-color: var(--primary-light);
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .controls-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f1f5f9;
+            border-radius: var(--border-radius);
+        }
+
+        button {
+            border: 1px solid var(--grey-medium);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            background-color: var(--white);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .text-content {
+            font-size: 1.2rem;
+            line-height: 2.5;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .sent {
+            padding: 0.2rem 0;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .sent.active {
+            background-color: var(--primary-light);
         }
 
         .word {
             display: inline-block;
-            padding: 0 4px;
             border-radius: 4px;
-            transition: all 0.2s ease;
+            padding: 0 4px;
             cursor: pointer;
+            transition: background 0.2s, color 0.2s;
         }
 
         .word:hover {
-            background-color: var(--primary-light);
-            color: var(--primary);
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .word.highlight {
-            background-color: var(--primary);
-            color: white !important;
-            transform: scale(1.05);
-        }
-
-        .word.paused-highlight {
-            background-color: #fef08a;
-            color: #854d0e !important;
-        }
-
-        .sent {
-            transition: background 0.3s ease;
-            padding: 6px 4px;
-            border-radius: 8px;
-            display: inline;
-            line-height: 2.5;
-        }
-
-        .sent.active {
-            background-color: rgba(79, 70, 229, 0.05);
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .tooltip {
             position: fixed;
-            z-index: 50;
+            z-index: 9999;
             background: #1e293b;
             color: white;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
             pointer-events: none;
+            visibility: hidden;
             opacity: 0;
-            transition: opacity 0.15s ease, transform 0.15s ease;
+            transition: opacity 0.2s;
             direction: rtl;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255,255,255,0.1);
+            text-align: right;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+            transform: translate(-50%, -100%);
+            margin-top: -8px;
+            white-space: nowrap;
         }
 
-        .tooltip .type {
-            display: block;
-            font-size: 10px;
-            text-transform: uppercase;
-            opacity: 0.6;
-            margin-bottom: 2px;
-            letter-spacing: 0.05em;
-            direction: ltr;
-            text-align: left;
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+
+        .lexicon-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .chip {
+            padding: 0.4rem 0.8rem;
+            background: var(--white);
+            border: 1px solid var(--grey-medium);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .cloze-input {
+            border: none;
+            border-bottom: 2px solid var(--grey-medium);
+            width: 80px;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <header class="bg-indigo-600 p-6 text-white text-center">
-            <h1 class="text-3xl font-bold flex items-center justify-center gap-3">
-                <span>🏫</span> Ma journée d'école
-            </h1>
-            <p class="mt-2 text-indigo-100 opacity-90">Lecture Interactive avec Traduction par Mot</p>
-        </header>
+<div class="container">
+    <h1>🏫 Ma journée d'école</h1>
 
-        <nav class="flex border-b">
-            <button onclick="switchTab('p1')" id="tab-p1" class="tab-btn flex-1 py-4 text-center transition-all tab-active">🎧 Lecture</button>
-            <button onclick="switchTab('p2')" id="tab-p2" class="tab-btn flex-1 py-4 text-center transition-all text-gray-500">🧐 Quiz</button>
-            <button onclick="switchTab('p3')" id="tab-p3" class="tab-btn flex-1 py-4 text-center transition-all text-gray-500">✍️ Écriture</button>
-        </nav>
+    <nav class="tabs">
+        <button class="tab" data-panel="p1" aria-selected="true">🎧 1. Écouter</button>
+        <button class="tab" data-panel="p2" aria-selected="false">🧐 2. Comprendre</button>
+        <button class="tab" data-panel="p3" aria-selected="false">✍️ 3. Écrire</button>
+    </nav>
 
-        <main class="p-6 md:p-10">
-            <!-- Part 1: TTS Reading -->
-            <section id="p1" class="tab-panel space-y-6">
-                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 text-sm text-indigo-700 rounded-r-lg">
-                    <strong>Astuce :</strong> Survolez un <b>mot</b> pour sa traduction seule, ou l'espace entre les mots pour la <b>phrase</b> entière.
-                </div>
+    <section id="p1" class="panel active">
+        <p class="instructions">
+            <strong>Survolez un mot</strong> pour voir sa traduction.<br>
+            <strong>Cliquez sur un mot</strong> pour l'écouter.
+        </p>
 
-                <div class="flex flex-wrap items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                    <div class="flex gap-2">
-                        <button id="btnPlay" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 shadow-md">
-                            <span>▶️</span> Lire
-                        </button>
-                        <button id="btnPause" disabled class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 disabled:opacity-50 transition">
-                            ⏸️ Pause
-                        </button>
-                        <button id="btnStop" disabled class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 disabled:opacity-50 transition">
-                            ⏹️ Stop
-                        </button>
-                    </div>
-                    
-                    <div class="flex items-center gap-4 flex-grow justify-end">
-                        <div class="flex flex-col text-[10px] text-gray-400 uppercase font-bold">
-                            Vitesse
-                            <input id="rate" type="range" min="0.5" max="1.2" step="0.1" value="0.8" class="accent-indigo-600 w-24">
-                        </div>
-                    </div>
-                </div>
+        <div class="controls-bar">
+            <button id="btnPlay" class="primary" disabled>▶️ Tout lire</button>
+            <button id="btnPause" disabled>⏸️ Pause</button>
+            <button id="btnResume" disabled>▶️ Reprendre</button>
+            <button id="btnStop" disabled>⏹️ Stop</button>
+            <input id="rate" type="range" min="0.5" max="1.5" step="0.1" value="0.9" style="width: 80px;">
+        </div>
 
-                <div id="textContent" class="text-xl leading-relaxed space-y-6 p-4 min-h-[300px] text-gray-800">
-                    <!-- Contenu généré -->
-                </div>
-            </section>
+        <div id="text" class="text-content"></div>
+    </section>
 
-            <!-- Part 2: Quiz -->
-            <section id="p2" class="tab-panel hidden space-y-8">
-                <div id="quizContainer" class="space-y-6"></div>
-                <div id="quizResult" class="hidden p-6 rounded-xl text-center font-bold text-lg"></div>
-            </section>
+    <section id="p3" class="panel">
+        <div class="controls-bar">
+            <button id="checkCloze" class="primary">✔️ Vérifier</button>
+            <button id="resetCloze">↺ Recommencer</button>
+        </div>
+        <div id="clozeArea" class="text-content"></div>
+        <div id="lexicon" class="lexicon-pool"></div>
+    </section>
+</div>
 
-            <!-- Part 3: Cloze Test -->
-            <section id="p3" class="tab-panel hidden space-y-6">
-                <div class="flex justify-between items-center mb-4">
-                    <p class="text-gray-600">Complétez avec les bons mots :</p>
-                    <div id="clozeScore" class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full font-bold">Score : --/--</div>
-                </div>
-                <div id="clozeArea" class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300 leading-loose text-lg"></div>
-                <div class="mt-8">
-                    <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2">📦 Boîte à mots</h3>
-                    <div id="lexiconPool" class="flex flex-wrap gap-2"></div>
-                </div>
-                <div class="flex gap-4 pt-6">
-                    <button onclick="checkCloze()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg">Vérifier</button>
-                    <button onclick="resetCloze()" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-bold hover:bg-gray-300 transition">Recommencer</button>
-                </div>
-            </section>
-        </main>
-    </div>
+<div id="tooltip" class="tooltip"></div>
 
-    <div id="tooltip" class="tooltip">
-        <span class="type" id="tooltipType"></span>
-        <span id="tooltipText"></span>
-    </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Dictionnaire pour les traductions mot à mot
+    const DICT = {
+        "ce": "هذا", "matin": "صباح", "je": "أنا", "me": "نفسي", "lève": "أستيقظ", "à": "في", "sept": "سبعة", "heures": "ساعات", "et": "و", "prends": "أتناول", "mon": "لي / الخاص بي", "petit-déjeuner": "فطور", "avec": "مع", "ma": "لي", "famille": "عائلة",
+        "ensuite": "بعد ذلك", "vais": "أذهب", "école": "مدرسة", "pied": "قدم", "frère": "أخ", "dans": "في", "première": "أولى", "heure": "ساعة", "nous": "نحن", "avons": "لدينا", "un": "واحد", "cours": "درس", "français": "فرنسي", "où": "حيث", "lisons": "نقرأ", "texte": "نص",
+        "puis": "ثم", "mathématiques": "رياضيات", "faisons": "نقوم بـ", "des": "الـ (للجمع)", "exercices": "تمارين", "au": "على", "tableau": "سبورة", "midi": "ظهر", "mange": "آكل", "la": "الـ", "cantine": "مقصف", "mes": "زملائي", "camarades": "زملاء", "classe": "فصل",
+        "après": "بعد", "le": "الـ", "repas": "وجبة", "allons": "نذهب", "cour": "ساحة", "pour": "لـ / من أجل", "jouer": "لعب", "discuter": "حديث", "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة رياضية", "histoire": "تاريخ",
+        "enfin": "أخيراً", "rentre": "أعود", "maison": "منزل", "fais": "أفعل", "devoirs": "واجبات", "regarde": "أشاهد", "peu": "قليلاً", "télévision": "تلفاز"
+    };
 
-    <script>
-        const DATA = {
-            sentences: [
-                { 
-                    fr: "Ce matin, je me lève à sept heures et je prends mon petit-déjeuner avec ma famille.", 
-                    ar: "هذا الصباح، أستيقظ في الساعة السابعة وأتناول فطوري مع عائلتي.",
-                    targets: ["lève", "famille"],
-                    dict: {
-                        "matin": "صباح", "lève": "أستيقظ", "heures": "ساعات", "prends": "آخذ / أتناول", "petit-déjeuner": "فطور", "famille": "عائلة"
-                    }
-                },
-                { 
-                    fr: "Ensuite, je vais à l’école à pied avec mon frère.", 
-                    ar: "بعد ذلك، أذهب إلى المدرسة سيرًا على الأقدام مع أخي.",
-                    targets: ["école", "frère"],
-                    dict: { "Ensuite": "بعد ذلك", "vais": "أذهب", "école": "مدرسة", "pied": "قدم", "frère": "أخ" }
-                },
-                { 
-                    fr: "Dans la première heure, nous avons un cours de français où nous lisons un texte.", 
-                    ar: "في الساعة الأولى، لدينا درس لغة فرنسية حيث نقرأ نصًا.",
-                    targets: ["cours", "lisons"],
-                    dict: { "première": "أولى", "heure": "ساعة", "cours": "درس", "français": "فرنسية", "lisons": "نقرأ", "texte": "نص" }
-                },
-                { 
-                    fr: "Puis je vais en mathématiques, et nous faisons des exercices au tableau.", 
-                    ar: "ثم أذهب إلى الرياضيات، ونقوم بتمارين على السبورة.",
-                    targets: ["exercices", "tableau"],
-                    dict: { "mathématiques": "رياضيات", "faisons": "نفعل / نقوم بـ", "exercices": "تمارين", "tableau": "سبورة" }
-                },
-                { 
-                    fr: "À midi, je mange à la cantine avec mes camarades de classe.", 
-                    ar: "عند الظهر، آكل في المقصف مع زملائي في الفصل.",
-                    targets: ["cantine", "camarades"],
-                    dict: { "midi": "ظهر", "mange": "آكل", "cantine": "مقصف", "camarades": "زملاء", "classe": "فصل" }
-                },
-                { 
-                    fr: "Après le repas, nous allons dans la cour pour jouer et discuter.", 
-                    ar: "بعد الوجبة، نذهب إلى الساحة للعب والحديث.",
-                    targets: ["cour", "jouer"],
-                    dict: { "repas": "وجبة", "cour": "ساحة", "jouer": "لعب", "discuter": "حديث / نقاش" }
-                },
-                { 
-                    fr: "L’après-midi, nous avons sport au gymnase et un cours d’histoire.", 
-                    ar: "بعد الظهر، لدينا رياضة في الصالة الرياضية ودرس تاريخ.",
-                    targets: ["sport", "gymnase", "histoire"],
-                    dict: { "après-midi": "بعد الظهر", "sport": "رياضة", "gymnase": "صالة رياضية", "histoire": "تاريخ" }
-                },
-                { 
-                    fr: "Enfin, je rentre à la maison, je fais mes devoirs et je regarde un peu la télévision.", 
-                    ar: "أخيرًا، أعود إلى المنزل، وأقوم بواجباتي وأشاهد التلفاز قليلاً.",
-                    targets: ["maison", "devoirs", "télévision"],
-                    dict: { "Enfin": "أخيراً", "rentre": "أعود", "maison": "منزل", "devoirs": "واجبات", "regarde": "أشاهد", "télévision": "تلفاز" }
-                }
-            ],
-            questions: [
-                { q: "Comment va-t-il à l’école ?", opts: ["En bus", "À pied", "En voiture"], ans: "À pied" },
-                { q: "Où mange-t-il à midi ?", opts: ["À la maison", "À la cantine", "Dans la cour"], ans: "À la cantine" }
-            ]
-        };
+    const DATA = [
+        { fr: "Ce matin, je me lève à sept heures et je prends mon petit-déjeuner avec ma famille.", gaps: ["lève", "famille"] },
+        { fr: "Ensuite, je vais à l’école à pied avec mon frère.", gaps: ["école", "frère"] },
+        { fr: "Dans la première heure, nous avons un cours de français où nous lisons un texte.", gaps: ["cours", "lisons"] },
+        { fr: "Puis je vais en mathématiques, et nous faisons des exercices au tableau.", gaps: ["exercices", "tableau"] },
+        { fr: "À midi, je mange à la cantine avec mes camarades de classe.", gaps: ["cantine", "camarades"] },
+        { fr: "Après le repas, nous allons dans la cour pour jouer et discuter.", gaps: ["cour", "jouer"] },
+        { fr: "L’après-midi, nous avons sport au gymnase et un cours d’histoire.", gaps: ["sport", "gymnase", "histoire"] },
+        { fr: "Enfin, je rentre à la maison, je fais mes devoirs et je regarde un peu la télévision.", gaps: ["maison", "devoirs", "télévision"] }
+    ];
 
-        const TTS = {
-            synth: window.speechSynthesis,
-            voices: [],
-            isReady: false,
-            init(cb) {
+    const tts = {
+        synth: window.speechSynthesis,
+        voice: null,
+        init() {
+            return new Promise((resolve) => {
                 const load = () => {
-                    this.voices = this.synth.getVoices().filter(v => v.lang.startsWith('fr'));
-                    if (this.voices.length) { this.isReady = true; cb(true); }
+                    const voices = this.synth.getVoices();
+                    this.voice = voices.find(v => v.lang.startsWith('fr')) || voices[0];
+                    if (this.voice) resolve(true);
                 };
-                if (this.synth.onvoiceschanged !== undefined) this.synth.onvoiceschanged = load;
                 load();
-            },
-            speak(text, rate, onBoundary, onEnd) {
-                this.synth.cancel();
-                const utt = new SpeechSynthesisUtterance(text);
-                utt.voice = this.voices[0];
-                utt.rate = rate;
-                utt.onboundary = onBoundary;
-                utt.onend = onEnd;
-                this.synth.speak(utt);
+                if (this.synth.onvoiceschanged !== undefined) this.synth.onvoiceschanged = load;
+                setTimeout(() => resolve(!!this.voice), 1000);
+            });
+        },
+        speak(text, rate, onBoundary, onEnd) {
+            this.synth.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.voice = this.voice;
+            u.rate = rate;
+            u.onboundary = onBoundary;
+            u.onend = onEnd;
+            this.synth.speak(u);
+        }
+    };
+
+    const textEl = document.getElementById('text');
+    const tooltip = document.getElementById('tooltip');
+    const btnPlay = document.getElementById('btnPlay');
+    const btnPause = document.getElementById('btnPause');
+    const btnResume = document.getElementById('btnResume');
+    const btnStop = document.getElementById('btnStop');
+
+    let isPaused = false;
+    let stopRequested = false;
+
+    // Génération du texte interactif
+    DATA.forEach((s, sIdx) => {
+        const pSpan = document.createElement('span');
+        pSpan.className = 'sent';
+        pSpan.dataset.idx = sIdx;
+        
+        const words = s.fr.split(/(\s+)/);
+        words.forEach(w => {
+            const cleanW = w.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+            if (cleanW) {
+                const b = document.createElement('span');
+                b.className = 'word';
+                b.textContent = w;
+                
+                // --- ÉVÉNEMENTS SUR CHAQUE MOT ---
+                b.onmouseenter = () => {
+                    const translation = DICT[cleanW] || "...";
+                    tooltip.textContent = translation;
+                    tooltip.style.visibility = "visible";
+                    tooltip.style.opacity = 1;
+                    
+                    const rect = b.getBoundingClientRect();
+                    tooltip.style.left = (rect.left + rect.width / 2) + "px";
+                    tooltip.style.top = rect.top + "px";
+                };
+
+                b.onmouseleave = () => {
+                    tooltip.style.opacity = 0;
+                    tooltip.style.visibility = "hidden";
+                };
+
+                b.onclick = (e) => {
+                    e.stopPropagation();
+                    tts.speak(cleanW, parseFloat(document.getElementById('rate').value));
+                };
+
+                pSpan.appendChild(b);
+            } else {
+                pSpan.appendChild(document.createTextNode(w));
             }
-        };
-
-        let state = { playing: false, paused: false, currentIdx: -1, lastWord: null };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderReading();
-            renderQuiz();
-            renderCloze();
-            setupEvents();
-            TTS.init(() => {});
         });
+        textEl.appendChild(pSpan);
+        textEl.appendChild(document.createTextNode(' '));
+    });
 
-        function renderReading() {
-            const container = document.getElementById('textContent');
-            DATA.sentences.forEach((s, i) => {
-                const p = document.createElement('div');
-                p.className = 'sent';
-                p.dataset.idx = i;
-                p.dataset.ar = s.ar;
-                
-                // On utilise une regex pour séparer les mots mais garder la ponctuation
-                const words = s.fr.split(/(\s+|,|\.|\'|\?|!)/);
-                words.forEach(token => {
-                    if (token.trim() && !/[,\.\'\?!]/.test(token)) {
-                        const span = document.createElement('span');
-                        span.className = 'word';
-                        span.textContent = token;
-                        // On attache la traduction du dictionnaire au mot s'il existe
-                        if (s.dict && s.dict[token]) span.dataset.ar = s.dict[token];
-                        else if (s.dict && s.dict[token.toLowerCase()]) span.dataset.ar = s.dict[token.toLowerCase()];
-                        
-                        p.appendChild(span);
-                    } else {
-                        p.appendChild(document.createTextNode(token));
-                    }
-                });
-                container.appendChild(p);
-                container.appendChild(document.createElement('br'));
-            });
+    // Fonctions de lecture
+    function clearHighlights() {
+        document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight'));
+        document.querySelectorAll('.sent').forEach(s => s.classList.remove('active'));
+    }
+
+    function playSentence(idx) {
+        if (idx >= DATA.length || stopRequested) {
+            btnPlay.disabled = false;
+            btnStop.disabled = true;
+            clearHighlights();
+            return;
         }
+        clearHighlights();
+        const sentEl = textEl.querySelector(`.sent[data-idx="${idx}"]`);
+        sentEl.classList.add('active');
 
-        function setupEvents() {
-            const container = document.getElementById('textContent');
-            const tooltip = document.getElementById('tooltip');
-            const tText = document.getElementById('tooltipText');
-            const tType = document.getElementById('tooltipType');
-
-            container.addEventListener('mouseover', e => {
-                if (state.playing) return;
-                
-                const word = e.target.closest('.word');
-                const sent = e.target.closest('.sent');
-                
-                if (word && word.dataset.ar) {
-                    tType.textContent = "Mot";
-                    tText.textContent = word.dataset.ar;
-                    tooltip.style.opacity = '1';
-                    tooltip.style.transform = 'translateY(0)';
-                } else if (sent) {
-                    tType.textContent = "Phrase";
-                    tText.textContent = sent.dataset.ar;
-                    tooltip.style.opacity = '1';
-                    tooltip.style.transform = 'translateY(0)';
-                    sent.classList.add('active');
-                }
-            });
-
-            container.addEventListener('mousemove', e => {
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
-            });
-
-            container.addEventListener('mouseout', e => {
-                tooltip.style.opacity = '0';
-                tooltip.style.transform = 'translateY(10px)';
-                const sent = e.target.closest('.sent');
-                if (sent) sent.classList.remove('active');
-            });
-
-            container.addEventListener('click', e => {
-                const word = e.target.closest('.word');
-                if (word && (state.paused || !state.playing)) {
-                    TTS.speak(word.textContent, 0.7);
-                }
-            });
-
-            document.getElementById('btnPlay').onclick = () => startPlayback(0);
-            document.getElementById('btnStop').onclick = stopPlayback;
-            document.getElementById('btnPause').onclick = () => {
-                TTS.synth.pause();
-                state.paused = true;
-                updateControls();
-                if (state.lastWord) state.lastWord.classList.add('paused-highlight');
-            };
-        }
-
-        function startPlayback(idx) {
-            if (idx >= DATA.sentences.length) { stopPlayback(); return; }
-            state.playing = true; state.paused = false; state.currentIdx = idx;
-            updateControls();
-
-            document.querySelectorAll('.sent').forEach(s => s.classList.remove('active'));
-            const currentSent = document.querySelector(`.sent[data-idx="${idx}"]`);
-            currentSent.classList.add('active');
-
-            TTS.speak(DATA.sentences[idx].fr, parseFloat(document.getElementById('rate').value), 
-                (e) => highlightWord(idx, e.charIndex),
-                () => { if (state.playing && !state.paused) setTimeout(() => startPlayback(idx + 1), 400); }
-            );
-        }
-
-        function stopPlayback() {
-            TTS.synth.cancel();
-            state.playing = false; state.paused = false;
-            document.querySelectorAll('.word').forEach(w => w.classList.remove('highlight', 'paused-highlight'));
-            document.querySelectorAll('.sent').forEach(s => s.classList.remove('active'));
-            updateControls();
-        }
-
-        function highlightWord(sentIdx, charIdx) {
-            const sent = document.querySelector(`.sent[data-idx="${sentIdx}"]`);
-            const words = sent.querySelectorAll('.word');
-            let cursor = 0;
+        tts.speak(DATA[idx].fr, parseFloat(document.getElementById('rate').value), (e) => {
+            const words = sentEl.querySelectorAll('.word');
+            let charCount = 0;
             words.forEach(w => {
                 w.classList.remove('highlight');
-                // Recherche approximative du mot correspondant à l'index de caractère
-                const text = sent.textContent;
-                const pos = text.indexOf(w.textContent, cursor);
-                if (charIdx >= pos && charIdx < pos + w.textContent.length) {
+                if (e.charIndex >= charCount && e.charIndex < charCount + w.textContent.length) {
                     w.classList.add('highlight');
-                    state.lastWord = w;
                 }
-                cursor = pos + 1;
+                charCount += w.textContent.length + 1;
             });
-        }
+        }, () => {
+            if (!isPaused) playSentence(idx + 1);
+        });
+    }
 
-        function updateControls() {
-            document.getElementById('btnPlay').disabled = state.playing;
-            document.getElementById('btnPause').disabled = !state.playing;
-            document.getElementById('btnStop').disabled = !state.playing && !state.paused;
-        }
+    btnPlay.onclick = () => { 
+        stopRequested = false; 
+        isPaused = false; 
+        btnPlay.disabled = true; 
+        btnPause.disabled = false;
+        btnStop.disabled = false;
+        playSentence(0); 
+    };
+    btnPause.onclick = () => { isPaused = true; tts.synth.pause(); btnPause.disabled = true; btnResume.disabled = false; };
+    btnResume.onclick = () => { isPaused = false; tts.synth.resume(); btnResume.disabled = true; btnPause.disabled = false; };
+    btnStop.onclick = () => { stopRequested = true; tts.synth.cancel(); btnPlay.disabled = false; btnPause.disabled = true; btnResume.disabled = true; btnStop.disabled = true; clearHighlights(); };
 
-        function switchTab(id) {
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active', 'text-gray-500'));
-            document.getElementById(`tab-${id}`).classList.add('tab-active');
-            stopPlayback();
-        }
+    // Gestion Tabs simple
+    document.querySelectorAll('.tab').forEach(t => {
+        t.onclick = () => {
+            document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', 'false'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            t.setAttribute('aria-selected', 'true');
+            document.getElementById(t.dataset.panel).classList.add('active');
+            if(t.dataset.panel !== 'p1') tts.synth.cancel();
+        };
+    });
 
-        // --- Autres fonctions (Quiz/Cloze) inchangées mais intégrées pour la cohérence ---
-        function renderQuiz() {
-            const container = document.getElementById('quizContainer');
-            DATA.questions.forEach((q, i) => {
-                const card = document.createElement('div');
-                card.className = 'bg-white border border-gray-200 p-6 rounded-xl shadow-sm space-y-4';
-                card.innerHTML = `<p class="font-bold text-lg text-gray-800">${i+1}. ${q.q}</p>`;
-                const optsBox = document.createElement('div');
-                optsBox.className = 'grid grid-cols-1 md:grid-cols-2 gap-3';
-                q.opts.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'text-left p-4 rounded-lg border border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition';
-                    btn.textContent = opt;
-                    btn.onclick = () => {
-                        if (optsBox.dataset.locked) return;
-                        optsBox.dataset.locked = "true";
-                        btn.className += (opt === q.ans) ? ' border-emerald-500 bg-emerald-50 text-emerald-700 font-bold' : ' border-red-500 bg-red-50 text-red-700 font-bold';
-                    };
-                    optsBox.appendChild(btn);
-                });
-                card.appendChild(optsBox);
-                container.appendChild(card);
+    // Initialisation Cloze
+    function initCloze() {
+        const area = document.getElementById('clozeArea');
+        const lex = document.getElementById('lexicon');
+        area.innerHTML = ""; lex.innerHTML = "";
+        let gWords = [];
+        DATA.forEach(s => {
+            let html = s.fr;
+            s.gaps.forEach(g => {
+                html = html.replace(new RegExp(`\\b${g}\\b`, 'i'), `<input class="cloze-input" data-ans="${g}">`);
+                gWords.push(g);
             });
-        }
+            const p = document.createElement('p'); p.innerHTML = html; area.appendChild(p);
+        });
+        gWords.sort().forEach(w => {
+            const c = document.createElement('span'); c.className = 'chip'; c.textContent = w;
+            c.onclick = () => { if(document.activeElement.tagName === 'INPUT') document.activeElement.value = w; };
+            lex.appendChild(c);
+        });
+    }
 
-        function renderCloze() {
-            const area = document.getElementById('clozeArea');
-            const pool = document.getElementById('lexiconPool');
-            const lexicon = new Set();
-            DATA.sentences.forEach(s => {
-                let html = s.fr;
-                s.targets.forEach(t => {
-                    lexicon.add(t);
-                    const regex = new RegExp(`\\b${t}\\b`, 'gi');
-                    html = html.replace(regex, `<input type="text" class="cloze-input border-b-2 border-indigo-200 focus:border-indigo-500 outline-none px-2 w-28 text-center bg-transparent" data-answer="${t}">`);
-                });
-                const p = document.createElement('p'); p.className = "mb-2"; p.innerHTML = html; area.appendChild(p);
-            });
-            Array.from(lexicon).sort().forEach(word => {
-                const b = document.createElement('button');
-                b.className = "bg-white border border-gray-300 px-4 py-1 rounded-full text-sm hover:bg-indigo-50 transition";
-                b.textContent = word;
-                b.onclick = () => { if(document.activeElement.classList.contains('cloze-input')) document.activeElement.value = word; };
-                pool.appendChild(b);
-            });
-        }
+    document.getElementById('checkCloze').onclick = () => {
+        document.querySelectorAll('.cloze-input').forEach(i => {
+            const ok = i.value.trim().toLowerCase() === i.dataset.ans.toLowerCase();
+            i.style.borderBottomColor = ok ? 'var(--success-color)' : 'var(--error-color)';
+        });
+    };
+    document.getElementById('resetCloze').onclick = initCloze;
 
-        function checkCloze() {
-            let score = 0;
-            const inputs = document.querySelectorAll('.cloze-input');
-            inputs.forEach(input => {
-                const correct = input.value.trim().toLowerCase() === input.dataset.answer.toLowerCase();
-                input.className = `cloze-input border-b-2 outline-none px-2 w-28 text-center bg-transparent ${correct ? 'border-emerald-500 text-emerald-600' : 'border-red-500 text-red-600'}`;
-                if (correct) score++;
-            });
-            document.getElementById('clozeScore').textContent = `Score : ${score}/${inputs.length}`;
-        }
-
-        function resetCloze() {
-            document.querySelectorAll('.cloze-input').forEach(i => { i.value = ""; i.className = "cloze-input border-b-2 border-indigo-200 focus:border-indigo-500 outline-none px-2 w-28 text-center bg-transparent"; });
-        }
-    </script>
+    tts.init().then(ok => { if(ok) btnPlay.disabled = false; });
+    initCloze();
+});
+</script>
 </body>
 </html>
